@@ -8,4 +8,5 @@
 - Higiene git/Make/hooks no formato Aether (`install.sh`, escopo e corpo de commit obrigatorios), sem Conda/Docker.
 - CI/CD Python com YAML/JSON separados (`--config-text json|yaml`), sem jobs Docker/shell.
 - Workflow GitHub Actions dispara em `master` (branch padrao).
+- Release semantica (`linters/releaserc.json`) e resumo do pipeline apos CI verde.
 - `GetAppStatus` permanece em `--status`.

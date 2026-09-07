@@ -30,6 +30,8 @@ make app-pre-commit-run
 
 `make app-pre-commit` chama `linters/git-hooks/install.sh` (wrapper `commit-msg` no WSL). Python do Make: `.venv/bin/python` se existir. Nao usar `make app-run` para diagnosticar (mede o WSL, nao a NIC Windows).
 
+CI/CD: push/PR em `master` (`.github/README.md`). Sem jobs Docker/Shell.
+
 ## Docs
 
 `README.md`, `docs/engineering-standards.md`, rule `snh-scripts`

@@ -19,6 +19,7 @@ Rules/skills vivem em [`.cursor/`](../.cursor/) e sao **versionadas** no git.
 | Contrato prompt-modelo | [prompt-model.md](../prompt-model.md) | `snh-engineering.mdc` | `snh-surface-sync` |
 | Scripts / Make | [engineering-standards.md](engineering-standards.md) + [structure.md](structure.md) | `snh-scripts.mdc` | `snh-ops-runbook` |
 | Diagnostico NetOps | [arquitetura.md](arquitetura.md) | `snh-hexagonal.mdc` | `snh-ops-runbook` |
+| CI/CD GitHub | [.github/README.md](../.github/README.md) + [engineering-standards.md](engineering-standards.md) | `snh-scripts.mdc` | `snh-ops-runbook` |
 
 ## Pastas DDD ↔ matriz
 
@@ -34,6 +35,7 @@ Rules/skills vivem em [`.cursor/`](../.cursor/) e sao **versionadas** no git.
 | `app/scripts/operations/` | Scripts / Make |
 | `app/tests/` | Engenharia / QA |
 | `.env.example` | Settings / `.env` |
+| `.github/` | CI/CD GitHub |
 
 ## Rules alwaysApply
 

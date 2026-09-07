@@ -29,6 +29,7 @@ def _iter_yaml_files() -> list[Path]:
 def _iter_json_files() -> list[Path]:
     return [
         REPO_ROOT / ".vscode" / "settings.json",
+        REPO_ROOT / "linters" / "releaserc.json",
     ]
 
 
@@ -73,10 +74,11 @@ def stage_json_lint() -> None:
 
 def stage_json_validate() -> None:
     stage_json_lint()
-    settings = json.loads((REPO_ROOT / ".vscode" / "settings.json").read_text(encoding="utf-8"))
     violations: list[str] = []
-    if not isinstance(settings, dict):
-        violations.append(".vscode/settings.json nao e objeto")
+    for path in _iter_json_files():
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            violations.append(f"{path} nao e objeto")
     exit_if_violations("JSON invalido estruturalmente:", violations)
     print("[OK] JSON estruturalmente valido.")
 

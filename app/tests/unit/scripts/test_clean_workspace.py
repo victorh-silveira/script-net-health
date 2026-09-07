@@ -91,13 +91,16 @@ def test_iter_yaml_skips_templates_and_finds_workflows():
     paths = {path.as_posix() for path in _iter_yaml_files()}
     assert any("workflows/ci.yml" in item for item in paths)
     assert any("setup-python/action.yml" in item for item in paths)
+    assert any("release/action.yml" in item for item in paths)
+    assert any("pipeline-summary/action.yml" in item for item in paths)
     assert all("templates" not in item for item in paths)
 
 
 @pytest.mark.unit
-def test_iter_json_includes_vscode_settings():
+def test_iter_json_includes_vscode_settings_and_releaserc():
     names = [path.name for path in _iter_json_files()]
     assert "settings.json" in names
+    assert "releaserc.json" in names
 
 
 @pytest.mark.unit

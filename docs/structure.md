@@ -38,10 +38,15 @@
 ├── linters/
 │   ├── commitlint.config.mjs
 │   ├── pre-commit-config.yaml
+│   ├── releaserc.json
 │   └── git-hooks/
 │       ├── install.sh
 │       ├── commit-msg
 │       └── bin/
+├── .github/
+│   ├── actions/
+│   ├── workflows/
+│   └── README.md
 ├── .cursor/
 ├── Makefile
 ├── AGENTS.md

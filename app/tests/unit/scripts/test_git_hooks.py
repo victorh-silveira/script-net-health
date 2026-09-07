@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import subprocess
 
 import pytest
@@ -65,6 +66,38 @@ def test_ci_workflow_triggers_on_master():
     text = (REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     assert "branches: [master]" in text
     assert "branches: [main]" not in text
+    assert "name: CI - Release" in text
+    assert "name: CI - Resumo" in text
+    assert "name: CI - Workflows" in text
+    assert "FORCE_JAVASCRIPT_ACTIONS_TO_NODE24" in text
+    assert "  docker:\n" not in text
+    assert "  shell:\n" not in text
+    assert "docker: skipped" in text
+    assert "shell: skipped" in text
+
+
+@pytest.mark.unit
+def test_releaserc_targets_master():
+    payload = json.loads((REPO_ROOT / "linters" / "releaserc.json").read_text(encoding="utf-8"))
+    assert payload["branches"] == ["master"]
+    changelog = payload["plugins"][2][1]
+    git_plugin = payload["plugins"][3][1]
+    assert changelog["changelogFile"] == "docs/CHANGELOG.md"
+    assert "app/pyproject.toml" in git_plugin["assets"]
+
+
+@pytest.mark.unit
+def test_ci_composite_actions_exist():
+    root = REPO_ROOT / ".github" / "actions"
+    expected = (
+        root / "ci" / "setup-python" / "action.yml",
+        root / "ci" / "release" / "action.yml",
+        root / "ci" / "sync-tags" / "action.yml",
+        root / "ci" / "workflows" / "action.yml",
+        root / "shared" / "pipeline-summary" / "action.yml",
+    )
+    for path in expected:
+        assert path.is_file(), f"ausente: {path}"
 
 
 @pytest.mark.unit

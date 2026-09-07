@@ -67,6 +67,7 @@ Instalar via `make app-pre-commit` (`linters/git-hooks/install.sh` copia o wrapp
 | Deps Python | `docs/engineering-python-deps.md` + skill `snh-python-deps` |
 | Higienizacao | `docs/engineering-repo-hygiene.md` + skill `snh-repo-hygiene` |
 | Make / CLI ops | skill `snh-ops-runbook` |
+| CI/CD GitHub | `.github/README.md` + `docs/engineering-standards.md` |
 | Scaffold / contrato | `prompt-model.md` + skill `snh-surface-sync` |
 
 Inventario: [`docs/structure.md`](docs/structure.md)

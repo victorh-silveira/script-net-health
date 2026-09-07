@@ -12,6 +12,7 @@ Rule: `snh-surface-sync`. Skill: `snh-surface-sync`.
 | Logging | `engineering-observability.md`, rule `snh-logging` |
 | Settings / `.env` | `engineering-settings-ssot.md`, skill `snh-settings-change` |
 | Gates / QA | `engineering-standards.md`, skill `snh-precommit` |
+| CI/CD GitHub | `.github/README.md`, `linters/releaserc.json` |
 | Deps pip | `engineering-python-deps.md`, skill `snh-python-deps` |
 | Nova skill/rule | `agent-coverage.md` + tabela em `AGENTS.md` |
 | Contrato cross-repo | `prompt-model.md` |

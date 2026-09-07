@@ -18,6 +18,8 @@ Pre-commit (`linters/pre-commit-config.yaml`): stage `commit-msg` com `fail_fast
 
 Entrypoint do app: no **PowerShell**, `py -3.13 run.py` (diagnostico NetOps; `py -3.13 run.py --status` para identidade). Make/hooks so no WSL.
 
+CI/CD GitHub: [`.github/README.md`](../.github/README.md) — jobs Python + Workflows (actionlint); Release (semantic-release em `master`); Resumo. Docker/Shell skipped. Config: [`linters/releaserc.json`](../linters/releaserc.json).
+
 ## Invariantes
 
 - `app/src/**/*.py` <= 300 linhas
