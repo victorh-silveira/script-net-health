@@ -1,3 +1,9 @@
+## 1.0.0 (2026-09-07)
+
+### Funcionalidades
+
+* **all:** disponibilizar copiloto NetOps hexagonal ([ec4ca57](https://github.com/victorh-silveira/script-net-health/commit/ec4ca5741abf8a114724a8514ad782927a6a67b3))
+
 # Changelog
 
 ## 0.0.0
