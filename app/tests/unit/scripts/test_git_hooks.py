@@ -61,6 +61,13 @@ def test_pre_commit_config_has_config_text_hooks():
 
 
 @pytest.mark.unit
+def test_ci_workflow_triggers_on_master():
+    text = (REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "branches: [master]" in text
+    assert "branches: [main]" not in text
+
+
+@pytest.mark.unit
 def test_commitlint_requires_scope_and_body():
     text = COMMITLINT.read_text(encoding="utf-8")
     assert '"scope-empty": [2, "never"]' in text
