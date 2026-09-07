@@ -1,0 +1,13 @@
+---
+description: Scripts e Make — orquestrador unico clean_workspace / app-*
+alwaysApply: true
+---
+
+# Scripts
+
+- Qualidade apenas via `app/scripts/operations/clean_workspace.py`
+- Make (WSL): `app-clean`, `app-install`, `app-lint`, `app-pre-commit` (`linters/git-hooks/install.sh`), `app-pre-commit-run`, `app-run` (lembrete PowerShell), `app-security`, `app-setup`, `app-test`
+- Diagnostico do app: PowerShell `py -3.13 run.py` (nao via Make/WSL)
+- Orquestrador: `--area python` e `--stage` crash-first (`lint` → `validate` → `security` → `test` → `build`); YAML/JSON via `--config-text json|yaml`
+- Nao inventar pipelines paralelos de lint/test
+- Docs: `docs/engineering-standards.md`, skill `snh-ops-runbook`

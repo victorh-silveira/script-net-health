@@ -1,0 +1,104 @@
+minimum_pre_commit_version: "3.5.0"
+fail_fast: true
+
+default_language_version:
+  python: python3.13
+
+repos:
+  - repo: local
+    hooks:
+      - id: commitlint
+        name: Commitlint (Conventional Commits)
+        entry: bash linters/git-hooks/bin/commitlint-early.sh
+        language: system
+        pass_filenames: true
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-lint
+        name: Python | Lint
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-json-lint
+        name: Python | JSON Lint
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage lint --config-text json
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-yaml-lint
+        name: Python | YAML Lint
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage lint --config-text yaml
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-validate
+        name: Python | Validate
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-json-validate
+        name: Python | JSON Validate
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage validate --config-text json
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-yaml-validate
+        name: Python | YAML Validate
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage validate --config-text yaml
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-security
+        name: Python | Seguranca
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage security
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-test
+        name: Python | Testes
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 100
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-json-test
+        name: Python | JSON Testes
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage test --config-text json
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: python-build
+        name: Python | Build
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage build
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]
+
+      - id: cleanup
+        name: Limpeza (caches e artefatos locais)
+        entry: linters/git-hooks/bin/python app/scripts/operations/clean_workspace.py --area python --stage clean
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit-msg]

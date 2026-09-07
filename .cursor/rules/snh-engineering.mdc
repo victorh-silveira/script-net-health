@@ -1,0 +1,18 @@
+---
+description: Engenharia script-net-health — WSL, 300 linhas, cobertura 100%, commitlint PT-BR
+alwaysApply: true
+---
+
+# Engenharia
+
+- Terminal qualidade/git: **WSL** (`make`, pre-commit, commitlint)
+- App/probes: **PowerShell** no host Windows (`py -3.13 run.py`)
+- `app/src/**/*.py` <= **300** linhas; cobertura **100%** com branch coverage
+- Sem comentarios no codigo; docstrings OK; sem emojis
+- Pre-commit (stage `commit-msg`, `fail_fast`): commitlint → lint → JSON/YAML `--config-text` → validate → security → test → JSON test → build → cleanup
+- Commit: `tipo(escopo): assunto PT-BR` com escopo e corpo obrigatorios; escopos em `linters/commitlint.config.mjs`
+- Hook: `make app-pre-commit` via `linters/git-hooks/install.sh` (WSL)
+- SSOT de agentes: `AGENTS.md` + `docs/agent-coverage.md`
+- Scaffold cross-repo: `prompt-model.md`
+- Nao afrouxar QA para “passar o hook”; corrigir a causa
+- Docs: `docs/engineering-standards.md`

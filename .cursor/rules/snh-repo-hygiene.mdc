@@ -1,0 +1,12 @@
+---
+description: Higienizacao — apagar morto so com evidencia (vulture/grep)
+alwaysApply: true
+---
+
+# Repo hygiene
+
+- Remover codigo/arquivos mortos so com evidencia
+- Atualizar matriz/AGENTS se remover skill/rule/doc
+- Sem `_tmp*`, probes ou `.env` no git
+- Doc: `docs/engineering-repo-hygiene.md`
+- Skill: `snh-repo-hygiene`

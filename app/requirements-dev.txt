@@ -1,0 +1,13 @@
+ruff>=0.9.0
+yamllint>=1.35.0
+interrogate>=1.7.0
+pre-commit>=3.7.0
+vulture>=2.14
+mypy>=1.14.0
+pyyaml>=6.0.1
+
+bandit>=1.8.0
+pip-audit>=2.8.0
+
+pytest>=9.0.3
+coverage>=7.6.0

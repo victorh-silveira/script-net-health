@@ -1,0 +1,12 @@
+---
+description: Settings SSOT — .env / .env.example e Settings.from_env
+alwaysApply: true
+---
+
+# Settings SSOT
+
+- Runtime via `.env`; catalogo em `.env.example` (sem segredos)
+- Loader: `infrastructure/config/settings.py`
+- Vars `SNH_*`; testes com `SNH_DISABLE_DOTENV=1`
+- Doc: `docs/engineering-settings-ssot.md`
+- Skill: `snh-settings-change`

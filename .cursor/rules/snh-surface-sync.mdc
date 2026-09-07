@@ -1,0 +1,12 @@
+---
+description: Surface sync — fechar mudanca com docs/rules/skills/matriz alinhados
+alwaysApply: true
+---
+
+# Surface sync
+
+- Mudanca material → atualizar docs + rules + skills + `AGENTS.md` + `agent-coverage.md`
+- Rodar gates no WSL antes do commit final
+- Nao deixar superficie de agentes mentindo o SSOT
+- Doc: `docs/engineering-surface-sync.md`
+- Skill: `snh-surface-sync`

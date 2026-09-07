@@ -1,0 +1,13 @@
+---
+description: Logging semantico — log_event, redact, sem logs em domain/use case
+alwaysApply: true
+---
+
+# Logging
+
+- API: `infrastructure.logging.events.log_event`
+- Domain e use cases **nao** logam
+- Eventos estaveis `snh.*.started|finished|failed|skipped_*`
+- Sem dump de payload/body em INFO; URLs com query → `?***`
+- Silenciar `urllib3`/`requests`/`httpx`/`httpcore` em WARNING+
+- Doc: `docs/engineering-observability.md`

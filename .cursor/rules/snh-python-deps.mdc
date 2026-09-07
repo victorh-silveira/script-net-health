@@ -1,0 +1,13 @@
+---
+description: Dependencias Python — requirements runtime/dev sem redundancia
+alwaysApply: true
+---
+
+# Deps Python
+
+- Runtime: `app/requirements.txt`; dev: `app/requirements-dev.txt`
+- Config de ferramentas em `app/pyproject.toml`
+- Apos mudar deps: `make app-install` + lint/test/security
+- Polars only se houver tabelas; nao adicionar pandas
+- Doc: `docs/engineering-python-deps.md`
+- Skill: `snh-python-deps`

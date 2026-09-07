@@ -1,0 +1,1 @@
+"""Contratos (ports) da aplicacao."""

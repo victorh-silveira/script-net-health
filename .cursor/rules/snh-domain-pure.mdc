@@ -1,0 +1,11 @@
+---
+description: Domain puro — sem IO, HTTP, disco ou logging
+alwaysApply: true
+---
+
+# Domain puro
+
+- `domain` nao importa `infrastructure` nem `presentation` nem `application`
+- Sem HTTP client, filesystem, dotenv ou `logging` em entidades
+- Validacao de negocio nas entidades
+- Docs: `docs/arquitetura.md`, `docs/structure.md`

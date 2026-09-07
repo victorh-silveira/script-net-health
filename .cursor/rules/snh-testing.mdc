@@ -1,0 +1,13 @@
+---
+description: Testes TDD — unit por camada, fakes nos ports, SNH_DISABLE_DOTENV
+alwaysApply: true
+---
+
+# Testes
+
+- Unit: `app/tests/unit/{domain,application,infrastructure,presentation}`
+- Integracao: adapters de IO em `app/tests/integration`
+- Application: fakes tipados pelos ports
+- Isolar `.env` com `SNH_DISABLE_DOTENV=1`
+- Coverage branch fail-under 100; nao baixar a barra
+- Docs: `docs/engineering-standards.md`

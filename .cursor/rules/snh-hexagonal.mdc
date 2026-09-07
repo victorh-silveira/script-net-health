@@ -1,0 +1,13 @@
+---
+description: Hexagonal — ports na application, adapters na infrastructure, composition root na presentation
+alwaysApply: true
+---
+
+# Hexagonal
+
+- Ports: `application/ports` (`Protocol`)
+- Adapters: `infrastructure/adapters`
+- Use cases dependem so de ports + domain
+- Composition root apenas em `presentation/cli/bootstrap.py`
+- Imports limpos: `from domain...`, `from application...`
+- Docs: `docs/arquitetura.md`, `docs/structure.md`

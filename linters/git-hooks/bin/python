@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+PY="$("$HERE/resolve_venv_python.sh")" || exit 1
+exec "$PY" "$@"

@@ -1,0 +1,90 @@
+name: CI/CD - Pipeline principal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/**"
+      - "linters/**"
+      - "Makefile"
+      - "README.md"
+      - "AGENTS.md"
+      - "docs/**"
+      - "app/**"
+      - "run.py"
+      - ".cursor/**"
+      - ".vscode/**"
+      - ".yamllint.yaml"
+      - ".env.example"
+  pull_request:
+    paths:
+      - ".github/**"
+      - "linters/**"
+      - "Makefile"
+      - "README.md"
+      - "AGENTS.md"
+      - "docs/**"
+      - "app/**"
+      - "run.py"
+      - ".cursor/**"
+      - ".vscode/**"
+      - ".yamllint.yaml"
+      - ".env.example"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: CI - Python
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: ./.github/actions/ci/setup-python
+      - name: Instalar Gitleaks
+        shell: bash
+        run: |
+          GITLEAKS_VERSION="8.24.2"
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o /tmp/gitleaks.tar.gz
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp
+          sudo mv /tmp/gitleaks /usr/local/bin/gitleaks
+      - name: Python | Lint
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage lint
+      - name: Python | JSON Lint
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage lint --config-text json
+      - name: Python | YAML Lint
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage lint --config-text yaml
+      - name: Python | Validate
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage validate
+      - name: Python | JSON Validate
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage validate --config-text json
+      - name: Python | YAML Validate
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage validate --config-text yaml
+      - name: Python | Seguranca
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage security
+      - name: Python | Testes
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 100
+      - name: Python | JSON Testes
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage test --config-text json
+      - name: Python | Build
+        shell: bash
+        run: python app/scripts/operations/clean_workspace.py --area python --stage build

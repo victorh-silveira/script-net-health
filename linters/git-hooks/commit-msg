@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$HERE/../.." && pwd)"
+CONFIG="$ROOT/linters/pre-commit-config.yaml"
+RESOLVE="$ROOT/linters/git-hooks/bin/resolve_venv_python.sh"
+HOOK_BIN="$ROOT/linters/git-hooks/bin"
+
+if [ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null; then
+  if [ -x "$HOOK_BIN/python" ]; then
+    export PATH="${HOOK_BIN}:${PATH}"
+  fi
+fi
+
+run_impl() {
+  exec "$1" "${@:2}" hook-impl --config="$CONFIG" --hook-type=commit-msg --hook-dir="$HERE" -- "${ARGS[@]}"
+}
+
+ARGS=("$@")
+
+if command -v pre-commit >/dev/null 2>&1; then
+  run_impl pre-commit
+fi
+
+if [ -x "$RESOLVE" ]; then
+  VENV_PY="$("$RESOLVE")" || true
+  if [ -n "${VENV_PY:-}" ] && "$VENV_PY" -c "import pre_commit" 2>/dev/null; then
+    run_impl "$VENV_PY" -mpre_commit
+  fi
+fi
+
+for py in python3.13 python3 python; do
+  if command -v "$py" >/dev/null 2>&1 && "$py" -c "import pre_commit" 2>/dev/null; then
+    run_impl "$py" -mpre_commit
+  fi
+done
+
+echo "pre-commit nao encontrado. Rode: make app-install && make app-pre-commit" >&2
+exit 1
