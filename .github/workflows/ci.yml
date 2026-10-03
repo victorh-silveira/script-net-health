@@ -55,13 +55,30 @@ jobs:
           fetch-tags: true
       - name: Setup Python
         uses: ./.github/actions/ci/setup-python
+      - name: Cache Gitleaks
+        id: cache-gitleaks
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/gitleaks
+          key: gitleaks-8.24.2-${{ runner.os }}
       - name: Instalar Gitleaks
+        if: steps.cache-gitleaks.outputs.cache-hit != 'true'
         shell: bash
         run: |
           GITLEAKS_VERSION="8.24.2"
           curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o /tmp/gitleaks.tar.gz
           tar -xzf /tmp/gitleaks.tar.gz -C /tmp
           sudo mv /tmp/gitleaks /usr/local/bin/gitleaks
+      - name: Cache QA e Auditoria
+        uses: actions/cache@v4
+        with:
+          path: |
+            app/.mypy_cache
+            app/.ruff_cache
+            ~/.cache/pip-audit
+          key: qa-cache-${{ runner.os }}-py3.13-${{ hashFiles('app/requirements.txt', 'app/requirements-dev.txt', 'app/pyproject.toml') }}
+          restore-keys: |
+            qa-cache-${{ runner.os }}-py3.13-
       - name: Python | Lint
         shell: bash
         run: python app/scripts/operations/clean_workspace.py --area python --stage lint

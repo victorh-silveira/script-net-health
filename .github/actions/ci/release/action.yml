@@ -11,10 +11,17 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: "24"
+    - name: Cache npm
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: npm-release-${{ runner.os }}-${{ hashFiles('linters/releaserc.json') }}
+        restore-keys: |
+          npm-release-${{ runner.os }}-
     - name: Release | Install
       shell: bash
       run: |
-        npm install --no-save \
+        npm install --no-save --prefer-offline --no-audit --no-fund \
           semantic-release \
           @semantic-release/commit-analyzer \
           @semantic-release/release-notes-generator \

@@ -4,7 +4,14 @@ description: Actionlint nos workflows GitHub Actions
 runs:
   using: composite
   steps:
+    - name: Cache Actionlint
+      id: cache-actionlint
+      uses: actions/cache@v4
+      with:
+        path: /usr/local/bin/actionlint
+        key: actionlint-${{ runner.os }}-v1.7.7
     - name: Workflows | Setup
+      if: steps.cache-actionlint.outputs.cache-hit != 'true'
       shell: bash
       run: |
         curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
