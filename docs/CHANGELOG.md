@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/victorh-silveira/script-net-health/compare/v1.0.0...v1.0.1) (2026-10-03)
+
+### Melhorias de Performance
+
+* **repo:** otimizar desempenho e tempo da pipeline ([4684315](https://github.com/victorh-silveira/script-net-health/commit/4684315e183657fb9007fd867cd084fed87b77a3))
+
 ## 1.0.0 (2026-09-07)
 
 ### Funcionalidades
