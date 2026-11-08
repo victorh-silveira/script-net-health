@@ -1,13 +1,23 @@
 ---
-description: Scripts e Make — orquestrador unico clean_workspace / app-*
+description: Scripts operacionais e pipeline de manutenção — organização em app/scripts/operations e execução crash-first
 alwaysApply: true
 ---
 
-# Scripts
+# Regra: Scripts Operacionais (snh-scripts)
 
-- Qualidade apenas via `app/scripts/operations/clean_workspace.py`
-- Make (WSL): `app-clean`, `app-install`, `app-lint`, `app-pre-commit` (`linters/git-hooks/install.sh`), `app-pre-commit-run`, `app-run` (lembrete PowerShell), `app-security`, `app-setup`, `app-test`
-- Diagnostico do app: PowerShell `py -3.13 run.py` (nao via Make/WSL)
-- Orquestrador: `--area python` e `--stage` crash-first (`lint` → `validate` → `security` → `test` → `build`); YAML/JSON via `--config-text json|yaml`
-- Nao inventar pipelines paralelos de lint/test
-- Docs: `docs/engineering-standards.md`, skill `snh-ops-runbook`
+A automação local e os gates de qualidade são executados através de scripts dedicados e controlados.
+
+## Invariantes de Automação
+
+1. **Localização Canônica:**
+   - Todos os scripts operacionais residem em `app/scripts/operations/`:
+     - `clean_workspace.py`: Ponto de entrada CLI para execução de stages de validação e limpeza.
+     - `config_gates.py`: Validação de arquivos de configuração (JSON, YAML, .env.example).
+     - `python_gates.py`: Orquestração de linters, testes e análise de segurança Python.
+     - `gate_runtime.py`: Utilitários de execução e medição de tempo dos gates.
+
+2. **Proibição de Scripts Órfãos:**
+   - Proibido criar scripts soltos na raiz do repositório (com exceção do ponto de entrada oficial `run.py`).
+
+3. **Execução Crash-First:**
+   - Os gates operam no modelo fail-fast / crash-first: ao detectar qualquer violação de lint, formatação, teste ou segurança, a execução deve abortar imediatamente com código de saída diferente de zero.

@@ -1,12 +1,26 @@
 ---
-description: Settings SSOT — .env / .env.example e Settings.from_env
+description: SSOT de configurações operacionais — variáveis de ambiente com prefixo SNH_ e sincronização com .env.example
 alwaysApply: true
 ---
 
-# Settings SSOT
+# Regra: SSOT de Configurações (snh-settings-ssot)
 
-- Runtime via `.env`; catalogo em `.env.example` (sem segredos)
-- Loader: `infrastructure/config/settings.py`
-- Vars `SNH_*`; testes com `SNH_DISABLE_DOTENV=1`
-- Doc: `docs/engineering-settings-ssot.md`
-- Skill: `snh-settings-change`
+A única fonte da verdade (SSOT) para parâmetros de runtime e configurações do `script-net-health` é o arquivo `.env`, mapeado pela entidade `Settings`.
+
+## Invariantes de Configuração
+
+1. **Prefixo Obrigatório `SNH_`:**
+   - Toda variável de ambiente operacional deve iniciar obrigatoriamente com o prefixo `SNH_`.
+   - Exemplos: `SNH_APP_NAME`, `SNH_LOG_LEVEL`, `SNH_TARGET_HOST`, `SNH_COMMAND_TIMEOUT_SECONDS`.
+
+2. **Sincronização com `.env.example`:**
+   - Toda nova variável suportada pela classe `Settings` deve possuir uma entrada documentada com valor default funcional no arquivo `.env.example`.
+   - `.env` nunca deve ser incluído no commit do Git.
+
+3. **Carregamento Centralizado:**
+   - O carregamento ocorre exclusivamente através do método de fábrica `Settings.from_env()`.
+   - O loader deve realizar validação de tipos e coerção segura (ex: inteiros, booleanos e listas separadas por vírgula).
+   - Suporte mandatório ao switch `SNH_DISABLE_DOTENV` para isolamento de testes.
+
+4. **Documentação Técnica:**
+   - Toda alteração em variáveis deve ser refletida na tabela em `docs/engineering-settings-ssot.md`.

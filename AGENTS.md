@@ -1,74 +1,86 @@
 # AGENTS.md — Script Net Health
 
-Ponto de entrada para agentes Cursor/LLM neste repositorio.
+Ponto de entrada canônico para agentes de IA neste repositório.
 
-## Idioma e ambiente
+## Idioma e ambiente de execução
 
-- Respostas e commits em **PT-BR**
-- **App / probes:** PowerShell no host Windows (`py -3.13 run.py`)
-- **Qualidade / git:** WSL Linux (`make`, pre-commit, commitlint, GitHub)
-- Runtime app: **Python 3.13** em `.venv-win` (Windows). QA: `.venv` no WSL. Sem Conda, sem Docker nesta fatia
-- Arquitetura: **DDD / hexagonal**
-- Sem emojis em codigo, logs ou docs tecnicos
-- Sem comentarios no codigo (docstrings OK)
+- Respostas, documentações e mensagens de commit em **PT-BR**
+- **Execução da aplicação e probes:** PowerShell no host Windows (`py -3.13 run.py`)
+- **Qualidade, linters e git:** WSL Linux (`make`, `pre-commit`, `commitlint`, GitHub Actions)
+- **Runtime da aplicação:** Python 3.13 (`.venv-win` no Windows, `.venv` no WSL). Sem Conda e sem Docker
+- **Arquitetura:** Domain-Driven Design (DDD) puro e Arquitetura Hexagonal (Ports & Adapters)
+- **Estilo:** Sem emojis em código, logs, commits ou documentação técnica
+- **Comentários:** Sem comentários explicativos inline no código (usar apenas docstrings completas)
 
-## Universo operacional
+## Personas e papéis operacionais
 
-- Persona de produto: **NetOps Senior Copilot** (LAN/WAN, TCP/IP 4 camadas BOTTOM-UP)
-- Default CLI: coletar probes no **Windows** e imprimir o relatorio obrigatorio (stdout das probes na secao 5; logs INFO sem dump)
-- `--status`: identidade da aplicacao (`GetAppStatus`)
-- Isolar falha LAN vs WAN vs servico; nao inventar sem evidencia; path saudavel usa camada **Nenhuma**
-- Sem SSH Cisco/MikroTik nesta fatia
-- SSOT de config: `.env` + `.env.example` (`docs/engineering-settings-ssot.md`)
-- Composition root: `presentation/cli/bootstrap.py`
-- Qualidade: `make help`, `app-lint` / `app-test` / `app-security` via `clean_workspace.py` **no WSL**
+1. **NetOps Senior Copilot**:
+   - Diagnóstico determinístico de rede local (LAN) e remota (WAN / Serviço)
+   - Abordagem BOTTOM-UP seguindo as 4 camadas do modelo TCP/IP (Link, Internet, Transporte, Aplicação)
+   - Execução de probes Windows via allowlist sem shell arbitrário
+   - Geração de relatório estruturado em 5 seções obrigatórias
+   - Em caminhos sem falhas, o diagnóstico classifica a camada afetada como **Nenhuma**
 
-## O que o LLM e / nao e
+2. **Hexagonal Architect**:
+   - Manutenção estrita da separação de camadas: `domain`, `application`, `infrastructure`, `presentation`
+   - O domínio é 100% puro: proibido IO, sockets, chamadas a subprocess e loggers em entidades ou use cases
+   - Portas são contratos formais (`Protocol`) em `application/ports`
+   - Adaptadores implementam as portas em `infrastructure/adapters`
+   - Composition root centralizado exclusivamente em `presentation/cli/bootstrap.py`
 
-- **E:** copiloto de engenharia, auditoria e diagnostico NetOps com evidencias
-- **Nao e:** licenca para copiar dominio Aether/Deriv/OTRS nem para abrir shell arbitrario
+3. **Quality Gatekeeper**:
+   - Cobertura de testes mantida em **100%** de branch em toda a aplicação
+   - Testes unitários estruturados por camada em `app/tests/unit/`
+   - Isolamento de variáveis de ambiente com `SNH_DISABLE_DOTENV=1`
+   - Limite estrito de **300 linhas** por arquivo em `app/src/`
+   - Conventional Commits em PT-BR com escopos válidos
 
-Contrato: [`prompt-model.md`](prompt-model.md)
-Matriz 100% cobertura: [`docs/agent-coverage.md`](docs/agent-coverage.md)
-Rules/skills versionadas: [`.cursor/rules/`](.cursor/rules/) e [`.cursor/skills/`](.cursor/skills/)
+## Proibições globais
 
-## Proibicoes globais
+- Importar `infrastructure` ou `presentation` a partir de `domain` ou `application`
+- Inserir emissão de logs em entidades de domínio ou em casos de uso
+- Fazer dump de segredos, tokens ou transcrições completas de probes em nível INFO de log
+- Invocar subprocessos com `shell=True` ou com executáveis fora da allowlist
+- Arquivos de código em `app/src/**/*.py` excedendo 300 linhas
+- Cobertura de testes inferior a 100% de branch
+- Cometer `.env` ou chaves de acesso ao controle de versão
+- Assuntos de commit em inglês ou sem escopo/corpo obrigatórios
+- Afrouxar configurações de linters ou gates para contornar falhas
 
-- `domain`/`application` importando `infrastructure` ou `presentation`
-- Logs em entidade ou use case; dump de secrets/payload/stdout de probe em INFO
-- `subprocess` com `shell=True` ou argv fora da allowlist
-- Arquivos `app/src/**/*.py` acima de **300** linhas
-- Cobertura de testes abaixo de **100%** (branch)
-- Commitar `.env` ou tokens
-- Assunto de commit em ingles; tipo/escopo fora do commitlint
-- Afrouxar QA para “passar o hook”
+## SSOT de configuração e agentes
+
+- **Configurações operacionais:** `.env` e `.env.example` com prefixo obrigatório `SNH_` (`docs/engineering-settings-ssot.md`)
+- **Manifesto canônico de agentes:** [`.agents/agents.json`](.agents/agents.json)
+- **Rules canônicas:** [`.agents/rules/`](.agents/rules/) (espelhadas em [`.cursor/rules/`](.cursor/rules/))
+- **Skills canônicas:** [`.agents/skills/`](.agents/skills/) (espelhadas em [`.cursor/skills/`](.cursor/skills/))
+- **Matriz de cobertura 100%:** [`docs/agent-coverage.md`](docs/agent-coverage.md)
+- **Contrato de engenharia:** [`prompt-model.md`](prompt-model.md)
 
 ## Escopos commitlint
 
-`all`, `app`, `cli`, `config`, `deps`, `domain`, `infra`, `linters`, `repo`, `scripts`, `test`
+Escopos permitidos: `all`, `app`, `cli`, `config`, `deps`, `domain`, `infra`, `linters`, `repo`, `scripts`, `test`.
 
-Formato: `tipo(escopo): assunto em PT-BR` (escopo e corpo obrigatorios). Tipos: build, chore, ci, docs, feat, fix, perf, qa, refactor, revert, style, test.
+Formato do commit:
+```text
+tipo(escopo): assunto descritivo em PT-BR
 
-## Pre-commit
+Corpo detalhado explicando o motivo da alteracao e impactos operacionais.
+```
 
-Instalar via `make app-pre-commit` (`linters/git-hooks/install.sh` copia o wrapper `commit-msg`). Config: `linters/pre-commit-config.yaml` → stage `commit-msg` crash-first (`fail_fast`): commitlint → Python | Lint → JSON/YAML Lint → Validate → JSON/YAML Validate → Seguranca → Testes → JSON Testes → Build. YAML/JSON via `--config-text json|yaml`.
+Tipos permitidos: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `qa`, `refactor`, `revert`, `style`, `test`.
 
-## Leitura por tarefa
+## Roteamento de leitura por tarefa
 
-| Tarefa | Abrir primeiro |
-|--------|----------------|
-| Qualquer mudanca | este arquivo + `docs/agent-coverage.md` |
-| Diagnostico NetOps | `docs/arquitetura.md` + skill `snh-ops-runbook` |
-| QA / pre-commit | `docs/engineering-standards.md` + skill `snh-precommit` |
-| Fechamento de mudanca | `docs/engineering-surface-sync.md` + skill `snh-surface-sync` |
-| Domain / ports | `docs/arquitetura.md` + `docs/structure.md` |
-| Logging | `docs/engineering-observability.md` |
-| Settings / `.env` | `docs/engineering-settings-ssot.md` + skill `snh-settings-change` |
-| Deps Python | `docs/engineering-python-deps.md` + skill `snh-python-deps` |
-| Higienizacao | `docs/engineering-repo-hygiene.md` + skill `snh-repo-hygiene` |
-| Make / CLI ops | skill `snh-ops-runbook` |
-| CI/CD GitHub | `.github/README.md` + `docs/engineering-standards.md` |
-| Scaffold / contrato | `prompt-model.md` + skill `snh-surface-sync` |
-
-Inventario: [`docs/structure.md`](docs/structure.md)
-Arquitetura: [`docs/arquitetura.md`](docs/arquitetura.md)
+| Tarefa pretendida | Documentos e skills prioritários |
+| :--- | :--- |
+| Qualquer alteração no projeto | [`AGENTS.md`](AGENTS.md) + [`docs/agent-coverage.md`](docs/agent-coverage.md) |
+| Diagnóstico e operação de probes | [`docs/arquitetura.md`](docs/arquitetura.md) + skill `snh-ops-runbook` |
+| Qualidade e testes (WSL) | [`docs/engineering-standards.md`](docs/engineering-standards.md) + skill `snh-precommit` |
+| Fechamento de mudanças e sync | [`docs/engineering-surface-sync.md`](docs/engineering-surface-sync.md) + skill `snh-surface-sync` |
+| Domínio, entidades e use cases | [`docs/arquitetura.md`](docs/arquitetura.md) + [`docs/structure.md`](docs/structure.md) |
+| Observabilidade e logging | [`docs/engineering-observability.md`](docs/engineering-observability.md) |
+| Configuração e variáveis SNH_* | [`docs/engineering-settings-ssot.md`](docs/engineering-settings-ssot.md) + skill `snh-settings-change` |
+| Dependências Python | [`docs/engineering-python-deps.md`](docs/engineering-python-deps.md) + skill `snh-python-deps` |
+| Higiene e código morto | [`docs/engineering-repo-hygiene.md`](docs/engineering-repo-hygiene.md) + skill `snh-repo-hygiene` |
+| CI/CD e workflows do GitHub | [`.github/README.md`](.github/README.md) + [`docs/engineering-standards.md`](docs/engineering-standards.md) |
+| Contrato e scaffold de engenharia | [`prompt-model.md`](prompt-model.md) + skill `snh-surface-sync` |

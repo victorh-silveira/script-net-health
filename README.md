@@ -259,7 +259,8 @@ Catalogo unificado das configuracoes suportadas via `.env`:
 │   ├── actions/                  # Composite actions otimizadas (setup, workflows, release, summary)
 │   ├── workflows/ci.yml          # Pipeline principal de CI/CD (Python, Workflows, Release, Resumo)
 │   └── README.md                 # Documentacao tecnica da esteira do GitHub Actions
-├── .cursor/                      # Rules e skills da stack operacional do agente
+├── .agents/                      # Rules, skills e mcp.json canonicos do agente
+├── .cursor/                      # Ponte de retrocompatibilidade para o Cursor IDE
 ├── app/
 │   ├── src/
 │   │   ├── domain/               # Entidades, domain services e constantes (Puro, sem IO/Logs)

@@ -1,24 +1,17 @@
-# Higienizacao do repositorio
+# Higiene do Repositório
 
-Remover codigo ou arquivos mortos **somente com evidencia**.
+Padrões de limpeza e integridade contínua do código fonte no **Script Net Health**.
 
-## Evidencia aceita
+## Práticas Mandatórias
 
-- Vulture / ruff F401 apontando simbolo nao usado
-- Grep sem referencias (imports, docs, matriz, Makefile)
-- Teste/documentacao obsoleta apos migracao
+1. **Eliminação de Código Morto:**
+   - Auditoria regular com Vulture e checagem de variáveis e imports não utilizados via Ruff.
+   - Qualquer elemento sem uso comprovado deve ser removido sem deixar referências comentadas.
 
-## Procedimento
+2. **Proibição de Pastas Fantasmas:**
+   - Nenhuma pasta vazia deve persistir no repositório.
+   - Toda estrutura sob `app/src/` e `app/tests/` deve abrigar módulos ativos com testes correspondentes.
 
-1. Listar candidatos e prova (comando + resultado).
-2. Remover o menor conjunto seguro.
-3. Atualizar docs/rules/skills/matriz se a superficie sumiu.
-4. `make app-lint` + `make app-test`.
-
-## Nao fazer
-
-- Apagar “por limpeza” sem grep
-- Remover skill/rule indexada em `docs/agent-coverage.md` sem atualizar a matriz e `AGENTS.md`
-- Deixar `_tmp*`, `COMMIT_MSG.txt`, probes ou `.env` no tree
-
-Rule: `snh-repo-hygiene`. Skill: `snh-repo-hygiene`.
+3. **Limpeza de Artefatos Locais:**
+   - Manter o repositório livre de relatórios temporários (`.coverage*`, `coverage.xml`), logs de execução e arquivos transitórios.
+   - Utilizar o comando `python app/scripts/operations/clean_workspace.py --stage clean` para purgar caches.

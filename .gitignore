@@ -18,16 +18,22 @@ venv/
 .hypothesis/
 .ipynb_checkpoints/
 
-# ---- IA E FERRAMENTAS DE AGENTES (CURSOR/MCP) ----
+# ---- IA E FERRAMENTAS DE AGENTES (CANONICAL .agents/ E RETROCOMPATIBILIDADE) ----
 .agent/
-.agents/
 .antigravity/
+.gemini/
+.agents/*
+!.agents/rules/
+!.agents/rules/**
+!.agents/skills/
+!.agents/skills/**
+!.agents/mcp.json
+!.agents/agents.json
 .cursor/*
 !.cursor/rules/
 !.cursor/rules/**
 !.cursor/skills/
 !.cursor/skills/**
-.gemini/
 
 # ---- IDEs E SISTEMA OPERACIONAL ----
 *.swp

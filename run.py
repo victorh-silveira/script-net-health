@@ -8,7 +8,9 @@ from pathlib import Path
 def main() -> None:
     repo = Path(__file__).resolve().parent
     target = repo / "app" / "run.py"
-    raise SystemExit(subprocess.call([sys.executable, str(target), *sys.argv[1:]], cwd=repo))
+    raise SystemExit(
+        subprocess.call([sys.executable, str(target), *sys.argv[1:]], cwd=repo)
+    )
 
 
 if __name__ == "__main__":

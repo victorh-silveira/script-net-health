@@ -1,0 +1,20 @@
+---
+description: Higiene e integridade do repositório — eliminação de código morto, proibições de diretórios fantasmas e limpeza
+alwaysApply: true
+---
+
+# Regra: Higiene do Repositório (snh-repo-hygiene)
+
+O repositório deve permanecer limpo, auditável e livre de artefatos desnecessários.
+
+## Diretrizes de Higiene
+
+1. **Eliminação de Código Morto:**
+   - Funções, classes, imports ou variáveis não utilizadas devem ser eliminados imediatamente (verificado via Vulture e Ruff).
+
+2. **Proibição Absoluta de Diretórios Fantasmas:**
+   - Proibido manter pastas vazias ou estruturas aninhadas sem arquivos rastreados no Git (ex: `app/src/tests/`).
+   - Todos os diretórios devem possuir propósito arquitetural claro e arquivos ativos sob controle de versão.
+
+3. **Limpeza de Artefatos Locais:**
+   - Arquivos temporários, relatórios parciais de cobertura (`.coverage*`, `coverage.xml`), logs de depuração (`*.log`) e pastas de cache (`.pytest_cache`, `.mypy_cache`) devem ser ignorados no `.gitignore` e purgados regularmente via `clean_workspace.py --stage clean`.

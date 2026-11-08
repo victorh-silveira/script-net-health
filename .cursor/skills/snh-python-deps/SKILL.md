@@ -1,22 +1,32 @@
 ---
 name: snh-python-deps
 description: >-
-  Changes or audits Python dependencies for script-net-health (requirements.txt,
-  requirements-dev.txt, pyproject). Use when adding/removing packages, fixing
-  pip-audit, or the user mentions deps, requirements, or mypy stubs.
+  Audits, updates, and manages Python dependencies for script-net-health across
+  dual virtual environments (.venv on WSL and .venv-win on Windows host).
 ---
 
-# Deps Python
+# Gestão de Dependências Python (snh-python-deps)
 
-## Passos
+Procedimento estrito para auditoria, adição e atualização de bibliotecas no projeto.
 
-1. Escolher runtime vs dev requirements
-2. Evitar redundancia e pins desnecessarios
-3. `make app-install` no WSL (`.venv`). Runtime Windows: pip em `.venv-win`
-4. `make app-lint`, `make app-test`, `make app-security`
-5. Atualizar `docs/engineering-python-deps.md` se a politica mudar
-6. Tabelas: Polars only; nao adicionar pandas
+## Estrutura de Arquivos de Dependências
 
-## Docs
+- `app/requirements.txt`: Dependências de runtime da aplicação de produção.
+- `app/requirements-dev.txt`: Ferramentas de desenvolvimento, testes, linters e pre-commit (`-r requirements.txt`).
+- `app/pyproject.toml`: Metadados do projeto, configuração de ferramentas (Ruff, Pytest, Coverage, Bandit).
 
-`docs/engineering-python-deps.md`
+## Dual Virtual Environments
+
+1. **WSL Linux (`.venv`):**
+   - Utilizado pelo Makefile para rodar linters, formatters, gates de segurança e testes.
+   - Instalação: `make app-install` ou `pip install -r app/requirements-dev.txt`.
+2. **Windows Host (`.venv-win`):**
+   - Utilizado para execução da aplicação e captura direta de probes de rede.
+   - Instalação: `.\.venv-win\Scripts\pip install -r app\requirements.txt`.
+
+## Checklist para Adicionar uma Dependência
+
+1. **Avaliação Arquitetural:** Dependências de runtime devem respeitar as regras do DDD Hexagonal (nunca adicionar bibliotecas de IO no domínio).
+2. **Atualização dos Arquivos de Requisitos:** Inserir o pacote com versão fixada em `app/requirements.txt` ou `app/requirements-dev.txt`.
+3. **Auditoria de Vulnerabilidades:** Rodar `pip-audit` via `make app-security` no WSL.
+4. **Sincronização de Superfície:** Atualizar `docs/engineering-python-deps.md` caso a biblioteca introduza novo requisito operacional.

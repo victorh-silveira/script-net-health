@@ -1,13 +1,24 @@
 ---
-description: Logging semantico — log_event, redact, sem logs em domain/use case
+description: Observabilidade e Logging — logs estruturados nas bordas, proibição de logs no domínio e proteção de segredos
 alwaysApply: true
 ---
 
-# Logging
+# Regra: Observabilidade e Logging (snh-logging)
 
-- API: `infrastructure.logging.events.log_event`
-- Domain e use cases **nao** logam
-- Eventos estaveis `snh.*.started|finished|failed|skipped_*`
-- Sem dump de payload/body em INFO; URLs com query → `?***`
-- Silenciar `urllib3`/`requests`/`httpx`/`httpcore` em WARNING+
-- Doc: `docs/engineering-observability.md`
+A observabilidade do sistema deve fornecer rastreabilidade operacional sem comprometer a separação de responsabilidades nem expor dados sensíveis.
+
+## Diretrizes de Logging
+
+1. **Localização Exclusiva de Emissão:**
+   - Emissão de logs é restrita às camadas de `presentation` (ex: bootstrap, início/fim de comandos) e `infrastructure` (ex: execução de adaptadores, conexão com endpoints).
+   - **Proibição estrita:** É proibido emitir logs ou instanciar loggers nas camadas de `domain` e `application`.
+
+2. **Proteção Contra Dump Indevido em Nível INFO:**
+   - Em nível `INFO`, os logs devem registrar apenas eventos semânticos concisos (ex: início de coleta, conclusão de diagnóstico).
+   - Proibido imprimir transcrições volumosas de stdout de probes ou payloads completos em nível `INFO`. Essas informações detalhadas pertencem exclusivamente ao relatório final gerado pelo domínio para a CLI ou a nível `DEBUG`.
+
+3. **Proteção de Segredos e Credenciais:**
+   - Nenhum token, credencial ou conteúdo sensível deve ser exposto nos logs sob qualquer circunstância.
+
+4. **Configuração Unificada:**
+   - A inicialização do logger ocorre via `presentation/logging/setup.py`, respeitando `SNH_LOG_LEVEL` e redirecionando a saída apropriadamente.

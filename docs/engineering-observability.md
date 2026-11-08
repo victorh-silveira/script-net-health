@@ -1,41 +1,22 @@
-# Observabilidade e logs
+# Observabilidade e Logging
 
-## API
+Diretrizes e padrões para logging e rastreabilidade operacional no **Script Net Health**.
 
-```python
-from infrastructure.logging.events import log_event
+## Princípios de Logging
 
-log_event(logger, logging.INFO, "snh.app.started", name=identity.name)
-```
+1. **Separação por Camadas:**
+   - Emissão de logs é exclusiva das camadas de `presentation` e `infrastructure`.
+   - Proibido emitir logs ou instanciar loggers dentro das camadas de `domain` e `application`.
 
-Domain e use cases **nao** emitem logs. Setup do root logger: `presentation.logging.setup.configure_logging`.
+2. **Níveis de Log e Semântica:**
+   - `DEBUG`: Detalhes finos de parsing e argumentos sanitizados de subprocessos.
+   - `INFO`: Mensagens operacionais sucintas sobre início e término de execuções.
+   - `WARNING`: Anomalias recuperáveis ou timeouts previstos em probes opcionais.
+   - `ERROR`: Falhas de sistema ou violações de allowlist.
 
-## Eventos estaveis
+3. **Proteção Contra Dump em Nível INFO:**
+   - O stdout bruto retornado pelos utilitários Windows (ex: saída completa do `ipconfig` ou `ping`) **nunca** deve ser impresso no log em nível `INFO`.
+   - As transcrições completas são encapsuladas no objeto de domínio `ProbeTranscript` e apresentadas exclusivamente na Seção 5 do relatório final de diagnóstico via CLI.
 
-| Evento | Quando |
-|--------|--------|
-| `snh.app.started` | Inicio de `--status` |
-| `snh.app.finished` | Sucesso de `--status` |
-| `snh.app.failed` | Falha de `--status` |
-| `snh.diagnose.started` | Inicio do diagnostico |
-| `snh.diagnose.finished` | Diagnostico emitido |
-| `snh.diagnose.failed` | Falha no diagnostico |
-| `snh.probe.started` | Probe allowlisted iniciada |
-| `snh.probe.finished` | Probe concluida (sem stdout/body) |
-| `snh.probe.failed` | Probe timeout/exit/HTTP/TCP/speedtest falhou |
-| `snh.probe.skipped_binary` | Binario ausente |
-| `snh.probe.skipped_traceroute` | Tracert desligado |
-| `snh.probe.skipped_speedtest` | Throughput desligado |
-
-## Regras
-
-- Caminho feliz do diagnostico: `snh.diagnose.started` + `snh.diagnose.finished` (probes em INFO sem stdout).
-- Stdout integral das probes vai no relatorio (secao 5), nunca no log INFO.
-- Sem dump de payload JSON nem body HTTP em INFO.
-- URLs com query: `?***` via `redact_url`.
-- Campos `anon_key` / `token` / `secret` / `password` / `authorization` viram `***`.
-- `exc_info` apenas quando o logger estiver em DEBUG.
-- Loggers `urllib3`, `requests`, `httpx` e `httpcore` em WARNING+.
-- Sem emojis. Logs em PT-BR no sentido dos eventos (nomes estaveis em snake_case).
-
-Rule: `snh-logging`.
+4. **Tratamento de Dados Sensíveis:**
+   - Nenhum segredo, credencial de rede ou token deve ser gravado em arquivos de log ou emitido no console.

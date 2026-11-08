@@ -1,25 +1,36 @@
 ---
 name: snh-surface-sync
 description: >-
-  Closes script-net-health changes by syncing docs/rules/skills/AGENTS/matrix,
-  running quality gates on WSL, and removing local clutter. Use when finishing
-  a feature, settings change, docs update, or when the user mentions sync de
-  superficie, fechar PR, atualizar agents, or checklist pos-mudanca.
+  Finalizes changes by synchronizing docs, rules, skills, AGENTS.md, matrix,
+  mirroring to .cursor/, and validating all quality gates on WSL before commit.
 ---
 
-# Surface sync
+# Sincronização de Superfícies (snh-surface-sync)
 
-## Checklist
+Checklist e protocolo obrigatório de fechamento de qualquer alteração no repositório.
 
-1. Listar arquivos tocados e superficies em `docs/agent-coverage.md`
-2. Atualizar docs cujo significado operacional mudou
-3. Alinhar `.cursor/rules/*.mdc` e `.cursor/skills/*/SKILL.md` se o procedimento mudou
-4. Atualizar `AGENTS.md` (Leitura por tarefa) + linha na matriz
-5. Se o contrato DDD/QA mudou: `prompt-model.md`
-6. Remover `_tmp*`, probes, msgs de commit soltas
-7. Gates WSL: `make app-lint`, `make app-test`, `make app-security` (ou `make app-pre-commit-run`)
-8. Commit Conventional Commits PT-BR
+## Checklist de Fechamento
 
-## Docs
+Antes de cometer alterações ou abrir Pull Request:
 
-`docs/engineering-surface-sync.md`, `docs/agent-coverage.md`, `AGENTS.md`
+1. **Mapeamento de Superfícies Afetadas:**
+   - Identifique quais arquivos foram alterados e localize a respectiva linha na matriz em `docs/agent-coverage.md`.
+
+2. **Sincronização de Documentação Técnica:**
+   - Atualize os arquivos correspondentes em `docs/` se houver mudança em contratos, configurações ou arquitetura.
+
+3. **Paridade Canônica e Ponte (.agents/ e .cursor/):**
+   - Garanta que qualquer criação ou modificação em `.agents/rules/` e `.agents/skills/` seja espelhada para `.cursor/rules/` e `.cursor/skills/`.
+
+4. **Atualização da Matriz de Cobertura e AGENTS.md:**
+   - Certifique-se de que todas as novas rules e skills estão registradas em `docs/agent-coverage.md` e na tabela de leitura de `AGENTS.md`.
+
+5. **Execução de Quality Gates no WSL Linux:**
+   ```bash
+   make app-lint
+   make app-test
+   make app-security
+   ```
+
+6. **Compromisso Git:**
+   - Mensagem formatada no padrão Conventional Commits em PT-BR com tipo, escopo válido e corpo explicativo.

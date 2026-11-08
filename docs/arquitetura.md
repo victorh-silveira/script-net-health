@@ -1,76 +1,80 @@
-# Arquitetura Tecnica: Script Net Health
+# Arquitetura Técnica: Script Net Health
 
-Arquitetura baseada em **Clean Architecture / Hexagonal** e **Domain-Driven Design (DDD)**.
+Documento de especificação técnica da arquitetura baseada em **Domain-Driven Design (DDD)** e **Clean Architecture / Hexagonal (Ports & Adapters)**.
 
-Copilot NetOps: coleta probes no **host Windows** e diagnostica BOTTOM-UP a pilha TCP/IP de 4 camadas. Qualidade/git no WSL. Sem SSH para Cisco/MikroTik nesta fatia.
+## Visão Geral
 
-## Camadas
+O **Script Net Health** é um utilitário NetOps projetado para coletar probes no host Windows físico e diagnosticar deterministamente a pilha de rede BOTTOM-UP de acordo com as 4 camadas do modelo TCP/IP (RFC 1122).
+A esteira de qualidade, testes e linters opera no WSL Linux. Não há utilização de SSH para equipamentos de rede nesta fatia arquitetural.
+
+## Diagrama de Camadas
 
 ```mermaid
 flowchart TB
-  subgraph presentation [presentation]
-    CLI[cli]
-    Root[composition root]
+  subgraph presentation [Camada Presentation]
+    CLI[CLI Entrypoint: run.py]
+    Root[Composition Root: bootstrap.py]
   end
-  subgraph application [application]
-    StatusUC[GetAppStatus]
-    DiagUC[DiagnoseNetworkHealth]
-    Ports[ClockPort ProbeCollectorPort]
+
+  subgraph application [Camada Application]
+    StatusUC[UseCase: GetAppStatus]
+    DiagUC[UseCase: DiagnoseNetworkHealth]
+    Ports[Protocols: ClockPort, ProbeCollectorPort]
   end
-  subgraph domain [domain]
+
+  subgraph domain [Camada Domain Puro]
     Identity[AppIdentity]
-    Evidence[NetworkEvidence]
+    Evidence[NetworkEvidence & ProbeTranscript]
     Diagnoser[BottomUpDiagnoser]
     Report[DiagnosisReport]
+    Findings[TCPFinding & LayerClassification]
   end
-  subgraph infrastructure [infrastructure]
+
+  subgraph infrastructure [Camada Infrastructure]
     Clock[SystemClock]
     Collector[WindowsProbeCollector]
     Runner[AllowlistedCommandRunner]
     Cfg[Settings]
   end
+
   CLI --> Root
   Root --> StatusUC
   Root --> DiagUC
   DiagUC --> Ports
   DiagUC --> Diagnoser
   Diagnoser --> Evidence
+  Diagnoser --> Findings
   Diagnoser --> Report
   Collector -.->|implementa| Ports
   Collector --> Runner
+  Root --> Cfg
+  Root --> Collector
+  Root --> Clock
 ```
 
-### Domain
+## Responsabilidades por Camada
 
-`NetworkEvidence` (links com IPv4, pings com min/med/max/jitter, `ProbeTranscript`, throughput, TCP), `DiagnosisReport.as_text()` (formato obrigatorio NetOps), `BottomUpDiagnoser` + `tcp_layer_findings` (LAN/WAN/servico, path saudavel com camada `Nenhuma`). Sem IO e sem logs.
+### 1. Camada Domain (`app/src/domain/`)
+- Totalmente desacoplada de tecnologia de persistência, IO ou frameworks.
+- **Entidades e Valores:** `AppIdentity`, `NetworkEvidence`, `ProbeTranscript`, `DiagnosisReport`.
+- **Serviço de Diagnóstico:** `BottomUpDiagnoser` analisa link local (gateway, ARP), conectividade IP (ping WAN), transporte (conexão TCP direta na porta alvo) e aplicação (DNS / HTTP).
+- **Sem Efeitos Colaterais:** Não emite logs e não executa chamadas externas.
 
-### Application
+### 2. Camada Application (`app/src/application/`)
+- Orquestra os fluxos do sistema sem conhecer os detalhes da infraestrutura.
+- **Casos de Uso:**
+  - `DiagnoseNetworkHealth`: Invoca o coletor de probes, alimenta o serviço de domínio e obtém o relatório de diagnóstico estruturado.
+  - `GetAppStatus`: Fornece metadados operacionais e identidade da aplicação sob a flag `--status`.
+- **Portas:** `ClockPort` e `ProbeCollectorPort` definidos como `typing.Protocol`.
 
-`DiagnoseNetworkHealth` + `ProbeCollectorPort`. `GetAppStatus` permanece em `--status`.
+### 3. Camada Infrastructure (`app/src/infrastructure/`)
+- Contém os adaptadores que interagem com o sistema operacional e serviços externos.
+- `AllowlistedCommandRunner`: Executa exclusivamente comandos permitidos (`ipconfig`, `ping`, `arp`, `route`, `netstat`, `nslookup`, `tracert`) com `shell=False` e timeouts controlados.
+- `WindowsProbeCollector`: Coleta e estrutura as transcrições das probes.
+- `throughput_probe`: Realiza medição de transferência de dados se ativado.
+- `Settings`: Leitura e validação de configurações a partir de variáveis de ambiente.
 
-### Infrastructure
-
-`AllowlistedCommandRunner` (sem shell), `WindowsProbeCollector` (ipconfig/ping/arp/route/netstat/nslookup/tracert), `probe_tcp` (porta 443 por default), `throughput_probe` (urllib GET/POST, Cloudflare se URL vazia), `probe_http` opcional, `Settings.from_env`.
-
-### Presentation
-
-Composition root em `presentation/cli/bootstrap.py`. Default: diagnostico. `--status`: identidade da app.
-
-## Fluxo de diagnostico
-
-1. Collector corre probes allowlisted com timeout e guarda stdout em `ProbeTranscript` (sem dump em INFO).
-2. Parsers no adapter montam `NetworkEvidence` (RTT por amostras `time=`/`tempo=`; IPv4 da NIC).
-3. Diagnoser aplica regras L1 a L4. Transporte usa perda/jitter e TCP; sockets LISTEN sao nota, nao criterio de OK.
-4. CLI imprime o relatorio (resumo com Status; secao 5 com stdout integral) e emite `snh.diagnose.started|finished|failed`.
-
-## Relatorio (`as_text`)
-
-1. Resumo Executivo: Status (Saudavel/Falha/Degradado/Inconclusivo), impacto, camada so se houver falha (`Nenhuma` no path saudavel).
-2. Analise por camadas TCP/IP com status `[ok|degraded|failed|unknown]`.
-3. Causa raiz sustentada pelas probes.
-4. Plano de acao.
-5. Evidencias brutas: um bloco por comando com stdout integral.
-
-## Configuracao
-
-`.env` / `.env.example` com knobs `SNH_PROBE_*`, `SNH_ENABLE_SPEEDTEST`, `SNH_TCP_PROBE_PORT`, `SNH_TRACERT_TIMEOUT_SECONDS`. Testes: `SNH_DISABLE_DOTENV=1`.
+### 4. Camada Presentation (`app/src/presentation/`)
+- Interface do usuário e ponto de composição.
+- `presentation/cli/bootstrap.py`: Instancia as configurações, adaptadores concretos e injeta-os nos casos de uso.
+- `presentation/logging/setup.py`: Configuração do pipeline de logging estruturado da aplicação.

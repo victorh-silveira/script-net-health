@@ -1,13 +1,38 @@
 ---
-description: Hexagonal — ports na application, adapters na infrastructure, composition root na presentation
+description: Arquitetura Hexagonal — Ports na application, Adapters na infrastructure e Composition Root na presentation
 alwaysApply: true
 ---
 
-# Hexagonal
+# Regra: Arquitetura Hexagonal (snh-hexagonal)
 
-- Ports: `application/ports` (`Protocol`)
-- Adapters: `infrastructure/adapters`
-- Use cases dependem so de ports + domain
-- Composition root apenas em `presentation/cli/bootstrap.py`
-- Imports limpos: `from domain...`, `from application...`
-- Docs: `docs/arquitetura.md`, `docs/structure.md`
+O projeto adota Clean Architecture com Ports & Adapters para isolar regras de negócio de detalhes de infraestrutura e mecanismos de entrada.
+
+## Estrutura de Camadas
+
+```text
+presentation  -->  application  -->  domain
+     |                  ^
+     v                  |
+infrastructure ---------+ (implementa Ports)
+```
+
+## Diretrizes de Implementação
+
+1. **Portas (application/ports):**
+   - Definidas exclusivamente utilizando `typing.Protocol`.
+   - Exemplos: `ClockPort`, `ProbeCollectorPort`.
+   - Não devem conter lógica de execução, apenas assinaturas de métodos com tipagem estrita.
+
+2. **Casos de Uso (application/use_cases):**
+   - Orquestram o fluxo de execução invocando portas e serviços de domínio.
+   - Exemplos: `DiagnoseNetworkHealth`, `GetAppStatus`.
+   - Não dependem de implementações concretas da infraestrutura; recebem portas via injeção de dependência no construtor.
+
+3. **Adaptadores (infrastructure/adapters):**
+   - Implementações concretas das portas (`WindowsProbeCollector`, `SystemClock`, `AllowlistedCommandRunner`).
+   - Lidam com chamadas de sistema, subprocessos, rede e tratamento de erros de IO.
+
+4. **Composition Root (presentation/cli/bootstrap.py):**
+   - Ponto único de acoplamento do sistema.
+   - Responsável por instanciar `Settings.from_env()`, criar adaptadores de infraestrutura e injetá-los nos use cases.
+   - Nenhum outro módulo deve realizar acoplamento direto entre camadas.

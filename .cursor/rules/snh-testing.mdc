@@ -1,13 +1,25 @@
 ---
-description: Testes TDD — unit por camada, fakes nos ports, SNH_DISABLE_DOTENV
+description: Padrões de teste — TDD, 100% de branch coverage, isolamento de ambiente e estrutura de testes
 alwaysApply: true
 ---
 
-# Testes
+# Regra: Padrões de Teste (snh-testing)
 
-- Unit: `app/tests/unit/{domain,application,infrastructure,presentation}`
-- Integracao: adapters de IO em `app/tests/integration`
-- Application: fakes tipados pelos ports
-- Isolar `.env` com `SNH_DISABLE_DOTENV=1`
-- Coverage branch fail-under 100; nao baixar a barra
-- Docs: `docs/engineering-standards.md`
+O projeto exige qualidade industrial suportada por cobertura completa e isolamento absoluto de testes.
+
+## Diretrizes de Qualidade e Cobertura
+
+1. **Meta de Cobertura 100% (Branch Coverage):**
+   - A cobertura de testes sobre o código de produção em `app/src/` deve ser de exatamente **100%**, incluindo ramificações condicionais (`branch coverage`).
+   - Queda de cobertura é tratada como erro fatal no pre-commit e na esteira de CI.
+
+2. **Isolamento de Ambiente Local:**
+   - Testes unitários e de integração nunca devem depender de arquivos `.env` locais da máquina de desenvolvimento.
+   - A fixture de isolamento deve impor `SNH_DISABLE_DOTENV=1` para garantir comportamento determinístico e reprodutível.
+
+3. **Estrutura e Separação de Testes:**
+   - **Unitários (`app/tests/unit/`):** Testam isoladamente cada camada (`domain`, `application`, `infrastructure`, `presentation`, `scripts`). Dependências externas devem ser simuladas via mocks rápidos ou fakes de protocolos.
+   - **Integração (`app/tests/integration/`):** Validam a integração entre CLI, bootstrap, settings e adaptadores simulados.
+
+4. **Matriz de Cobertura de Agentes:**
+   - O teste `test_agent_coverage_matrix.py` valida que todas as superfícies listadas em `docs/agent-coverage.md` possuem rules e skills correspondentes existentes no sistema de arquivos.

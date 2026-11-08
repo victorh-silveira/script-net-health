@@ -1,32 +1,25 @@
-# Surface sync (fechamento de mudanca)
+# Sincronização de Superfícies
 
-Toda atualizacao material deve fechar com superficie de agentes coerente, gates verdes e working tree limpo.
+Procedimento obrigatório de fechamento de alterações e garantia de integridade entre documentação, regras e código.
 
-Rule: `snh-surface-sync`. Skill: `snh-surface-sync`.
+## Checklist de Superfícies
 
-## O que sincronizar
+Sempre que uma alteração envolver contratos arquiteturais, configurações operacionais ou esteiras de qualidade:
 
-| Mudanca | Superficie tipica |
-|---------|-------------------|
-| Camadas / ports | `arquitetura.md`, `structure.md`, rules hexagonal/domain |
-| Logging | `engineering-observability.md`, rule `snh-logging` |
-| Settings / `.env` | `engineering-settings-ssot.md`, skill `snh-settings-change` |
-| Gates / QA | `engineering-standards.md`, skill `snh-precommit` |
-| CI/CD GitHub | `.github/README.md`, `linters/releaserc.json` |
-| Deps pip | `engineering-python-deps.md`, skill `snh-python-deps` |
-| Nova skill/rule | `agent-coverage.md` + tabela em `AGENTS.md` |
-| Contrato cross-repo | `prompt-model.md` |
+1. **Documentação Técnica:**
+   - Atualizar os documentos pertinentes em `docs/`.
+   - Manter `README.md` alinhado caso a interface ou modo de uso tenha sido alterado.
 
-## Ordem de fechamento
+2. **Matriz de Cobertura de Agentes:**
+   - Garantir que `docs/agent-coverage.md` liste com exatidão todas as regras e skills ativas no projeto.
 
-1. Codigo + testes
-2. Docs / rules / skills / `AGENTS.md` / `agent-coverage.md`
-3. Remover sujeira local
-4. Gates WSL: `make app-lint`, `make app-test`, `make app-security` (ou `make app-pre-commit-run`)
-5. Commit Conventional Commits PT-BR
+3. **Ponto de Entrada Canônico:**
+   - Atualizar `AGENTS.md` se houver mudanças em personas, escopos de commit ou roteamento de tarefas.
 
-## Criterio de pronto
+4. **Sincronização de Rules e Skills (.agents/ e .cursor/):**
+   - Regras criadas ou editadas em `.agents/rules/` devem ser refletidas em `.cursor/rules/`.
+   - Skills criadas ou editadas em `.agents/skills/` devem ser refletidas em `.cursor/skills/`.
 
-- Matriz aponta para arquivos existentes
-- Rules com `alwaysApply: true`
-- Cobertura 100% branch; sem artefatos temporarios no diff
+5. **Execução de Quality Gates:**
+   - Executar no WSL Linux: `make app-lint` e `make app-test`.
+   - Verificar ausência de arquivos temporários com `git status`.

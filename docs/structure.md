@@ -1,81 +1,54 @@
-# Estrutura do repositorio
+# Estrutura do Repositório
 
-## Arvore
+Inventário técnico e estruturação de pastas do projeto **Script Net Health**.
+
+## Árvore do Repositório
 
 ```text
 .
-├── app/
-│   ├── src/
-│   │   ├── domain/
-│   │   │   ├── entities/
-│   │   │   ├── services/
-│   │   │   └── constants.py
-│   │   ├── application/
-│   │   │   ├── ports/
-│   │   │   └── use_cases/
-│   │   ├── infrastructure/
-│   │   │   ├── adapters/
-│   │   │   ├── config/
-│   │   │   └── logging/
-│   │   └── presentation/
-│   │       ├── cli/
-│   │       └── logging/
-│   ├── tests/
-│   │   ├── unit/
-│   │   │   ├── domain/
-│   │   │   ├── application/
-│   │   │   ├── infrastructure/
-│   │   │   ├── presentation/
-│   │   │   └── scripts/
-│   │   └── integration/
-│   ├── scripts/operations/
-│   ├── pyproject.toml
-│   ├── requirements.txt
-│   ├── requirements-dev.txt
-│   ├── snh_paths.py
-│   └── run.py
-├── docs/
-├── linters/
-│   ├── commitlint.config.mjs
-│   ├── pre-commit-config.yaml
-│   ├── releaserc.json
-│   └── git-hooks/
-│       ├── install.sh
-│       ├── commit-msg
-│       └── bin/
-├── .github/
+├── .agents/                      # Harness canônico de agentes de IA
+│   ├── rules/                    # 10 rules operacionais canônicas
+│   ├── skills/                   # 6 skills operacionais canônicas
+│   ├── agents.json               # Catálogo de personas e responsabilidades
+│   └── mcp.json                  # Manifesto canônico de MCP
+├── .cursor/                      # Ponte de retrocompatibilidade para o Cursor IDE
+│   ├── rules/                    # Espelho das rules canônicas
+│   └── skills/                   # Espelho das skills canônicas
+├── .github/                      # Workflows de CI/CD e automação do GitHub Actions
 │   ├── actions/
-│   ├── workflows/
-│   └── README.md
-├── .cursor/
-├── Makefile
-├── AGENTS.md
-├── prompt-model.md
-├── README.md
-├── .env.example
-└── run.py
+│   ├── templates/
+│   └── workflows/
+├── .vscode/                      # Configurações do VSCode / IDE
+├── app/                          # Código fonte da aplicação e testes
+│   ├── scripts/operations/       # Scripts operacionais de validação e limpeza
+│   ├── src/                      # Código de produção (DDD Hexagonal)
+│   │   ├── domain/               # Entidades e serviços puros (sem IO/logs)
+│   │   ├── application/          # Use cases e portas (Protocol)
+│   │   ├── infrastructure/       # Adaptadores de rede Windows, config e logs
+│   │   └── presentation/         # CLI e Composition Root (bootstrap.py)
+│   ├── tests/                    # Suíte unificada de testes (100% branch coverage)
+│   │   ├── unit/                 # Testes unitários isolados por camada
+│   │   └── integration/          # Testes integrados de CLI e settings
+│   ├── pyproject.toml            # Configurações de ferramentas de QA
+│   ├── requirements.txt          # Dependências de produção
+│   ├── requirements-dev.txt      # Dependências de desenvolvimento e teste
+│   └── run.py                    # Entrypoint interno da aplicação
+├── docs/                         # Documentação técnica e matriz de cobertura
+├── linters/                      # Configuração de commitlint e git hooks
+├── .env.example                  # Template com todas as variáveis SNH_*
+├── .gitignore                    # Regras estritas de exclusão do Git
+├── AGENTS.md                     # Ponto de entrada canônico para agentes
+├── Makefile                      # Orquestrador de tarefas no WSL Linux
+├── prompt-model.md               # Contrato canônico de engenharia
+├── README.md                     # Visão geral e guia rápido do projeto
+└── run.py                        # Entrypoint oficial na raiz do repositório
 ```
 
-Nao ha `infra/` neste esqueleto.
+## Regras de Dependência entre Camadas
 
-## Regras de dependencia
-
-| Camada | Pode depender de |
-|--------|------------------|
-| domain | apenas domain |
-| application | domain |
-| infrastructure | application, domain |
-| presentation | application, domain, infrastructure |
-
-Ports sao contratos (`Protocol`) em `application/ports`. Adapters implementam ports em `infrastructure/adapters`.
-
-Imports limpos (pythonpath = `app/src`):
-
-```python
-from domain.entities.network_evidence import NetworkEvidence
-from application.use_cases.diagnose_network_health import DiagnoseNetworkHealth
-from infrastructure.adapters.windows_probe_collector import WindowsProbeCollector
-from presentation.cli.bootstrap import main
-```
-
-O gate de validate Python (`clean_workspace.py --area python --stage validate`) falha se `domain`/`application` importarem camadas externas.
+| Camada | Pode Depender De | Proibido Depender De |
+| :--- | :--- | :--- |
+| `domain` | Nenhuma (Apenas tipos padrão Python) | `application`, `infrastructure`, `presentation` |
+| `application` | `domain` | `infrastructure`, `presentation` |
+| `infrastructure` | `application`, `domain` | `presentation` |
+| `presentation` | `application`, `domain`, `infrastructure` | Nenhuma |

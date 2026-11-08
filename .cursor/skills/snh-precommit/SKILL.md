@@ -1,33 +1,40 @@
 ---
 name: snh-precommit
 description: >-
-  Diagnoses and fixes script-net-health pre-commit failures (commitlint first,
-  Python lint/validate/security/test/build with YAML/JSON via --config-text,
-  300-line limit, pytest branch coverage 100%). Use when pre-commit fails,
-  coverage drops, a file exceeds 300 lines, or the user mentions
-  clean_workspace, fail-under, or commitlint.
+  Diagnoses and resolves pre-commit pipeline failures on WSL Linux, including
+  commitlint, Python linters (Ruff, Interrogate), security audits, and 100%
+  branch coverage pytest enforcement.
 ---
 
-# Pre-commit script-net-health
+# Pre-Commit e Quality Gates (snh-precommit)
 
-Crash-first no stage `commit-msg` (`fail_fast: true`): commitlint → Python | Lint → JSON/YAML Lint → Validate → JSON/YAML Validate → Seguranca → Testes → JSON Testes → Build → limpeza.
+Procedimento de diagnóstico e resolução de falhas na esteira de pre-commit e qualidade no WSL Linux.
 
-Instalar o hook no WSL com `make app-pre-commit` (`linters/git-hooks/install.sh`). YAML/JSON rodam com `--config-text json|yaml`. Mensagem invalida aborta antes dos gates Python.
+## Pipeline Crash-First
 
-## Passos
+A esteira de validação é executada no estágio `commit-msg` com política fail-fast (`fail_fast: true`):
+1. **Commitlint:** Validação estrita do padrão Conventional Commits em PT-BR.
+2. **Python Lint:** Formatação e linting estrito com Ruff (`check` e `format`).
+3. **JSON / YAML Lint:** Validação sintática e estrutural de arquivos de configuração.
+4. **Validação de Código:** Verificação de docstrings com Interrogate e ausência de código morto com Vulture.
+5. **Segurança:** Análise estática com Bandit e auditoria de vulnerabilidades com pip-audit.
+6. **Testes e Cobertura:** Execução completa da suíte Pytest exigindo 100% de branch coverage.
 
-1. Ler o trecho FAIL do hook
-2. Commitlint: tipo, escopo e corpo obrigatorios; assunto PT-BR (primeiro do crash-first)
-3. Python | Lint: Ruff, Interrogate, Vulture
-4. Python | JSON/YAML Lint: `--config-text json|yaml`
-5. Python | Validate: mypy, camadas, 300 linhas
-6. Python | JSON/YAML Validate: parse estrutural e `yaml.safe_load`
-7. Python | Seguranca: Bandit, pip-audit, Gitleaks se estiver no PATH
-8. Python | Testes: reproduzir o teste; cobrir misses/branches
-9. Python | JSON Testes: `.vscode/settings.json` (`extraPaths`, pytest)
-10. Python | Build: `compileall`
-11. Reexecutar no **WSL**: `make app-lint` / `make app-test` / `make app-security` (ou `make app-pre-commit-run`)
+## Resolução de Falhas Frequentes
 
-## Docs
+### 1. Rejeição de Mensagem de Commit pelo Commitlint
+- **Causa:** Assunto em inglês, ausência de escopo, tipo não reconhecido ou falta de linha em branco antes do corpo.
+- **Correção:** Formatar a mensagem no padrão:
+  ```text
+  tipo(escopo): assunto claro em PT-BR
 
-`docs/engineering-standards.md`, `AGENTS.md`
+  Corpo explicativo do motivo e das alteracoes realizadas.
+  ```
+
+### 2. Queda de Cobertura de Testes (< 100%)
+- **Causa:** Criação de novos caminhos condicionais (`if/else`, `match/case`, tratamento de exceções) sem testes unitários correspondentes.
+- **Correção:** Escrever testes cobrindo todas as ramificações em `app/tests/unit/`. Nunca reduzir o threshold de `--cov-fail-under=100`.
+
+### 3. Violação de Limite de Linhas (> 300)
+- **Causa:** Arquivo em `app/src/` com mais de 300 linhas de código.
+- **Correção:** Extrair responsabilidades para novos módulos coesos ou serviços auxiliares de domínio.
