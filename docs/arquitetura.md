@@ -11,30 +11,30 @@ A esteira de qualidade, testes e linters opera no WSL Linux. Não há utilizaç�
 
 ```mermaid
 flowchart TB
-  subgraph presentation [Camada Presentation]
-    CLI[CLI Entrypoint: run.py]
-    Root[Composition Root: bootstrap.py]
+  subgraph presentation ["Camada Presentation"]
+    CLI["CLI Entrypoint: run.py"]
+    Root["Composition Root: bootstrap.py"]
   end
 
-  subgraph application [Camada Application]
-    StatusUC[UseCase: GetAppStatus]
-    DiagUC[UseCase: DiagnoseNetworkHealth]
-    Ports[Protocols: ClockPort, ProbeCollectorPort]
+  subgraph application ["Camada Application"]
+    StatusUC["UseCase: GetAppStatus"]
+    DiagUC["UseCase: DiagnoseNetworkHealth"]
+    Ports["Protocols: ClockPort, ProbeCollectorPort"]
   end
 
-  subgraph domain [Camada Domain Puro]
-    Identity[AppIdentity]
-    Evidence[NetworkEvidence & ProbeTranscript]
-    Diagnoser[BottomUpDiagnoser]
-    Report[DiagnosisReport]
-    Findings[TCPFinding & LayerClassification]
+  subgraph domain ["Camada Domain Puro"]
+    Identity["AppIdentity"]
+    Evidence["NetworkEvidence & ProbeTranscript"]
+    Diagnoser["BottomUpDiagnoser"]
+    Report["DiagnosisReport"]
+    Findings["TCPFinding & LayerClassification"]
   end
 
-  subgraph infrastructure [Camada Infrastructure]
-    Clock[SystemClock]
-    Collector[WindowsProbeCollector]
-    Runner[AllowlistedCommandRunner]
-    Cfg[Settings]
+  subgraph infrastructure ["Camada Infrastructure"]
+    Clock["SystemClock"]
+    Collector["WindowsProbeCollector"]
+    Runner["AllowlistedCommandRunner"]
+    Cfg["Settings"]
   end
 
   CLI --> Root

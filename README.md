@@ -58,19 +58,19 @@ O projeto segue estritamente a inversao de dependencia e isolamento de fronteira
 
 ```mermaid
 flowchart TB
-  subgraph presentation [Camada de Apresentacao]
+  subgraph presentation ["Camada de Apresentacao"]
     CLI["CLI / Argumentos"]
     Root["Composition Root (bootstrap.py)"]
     LogSetup["Setup de Observabilidade"]
   end
 
-  subgraph application [Camada de Aplicacao]
+  subgraph application ["Camada de Aplicacao"]
     DiagUC["DiagnoseNetworkHealth"]
     StatusUC["GetAppStatus"]
     Ports["ProbeCollectorPort / ClockPort"]
   end
 
-  subgraph domain [Camada de Dominio (Puro)]
+  subgraph domain ["Camada de Dominio Puro"]
     Identity["AppIdentity"]
     Evidence["NetworkEvidence"]
     Diagnoser["BottomUpDiagnoser"]
@@ -78,7 +78,7 @@ flowchart TB
     Report["DiagnosisReport"]
   end
 
-  subgraph infrastructure [Camada de Infraestrutura]
+  subgraph infrastructure ["Camada de Infraestrutura"]
     Clock["SystemClock"]
     Collector["WindowsProbeCollector"]
     Runner["AllowlistedCommandRunner"]
