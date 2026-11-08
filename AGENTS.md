@@ -51,8 +51,8 @@ Ponto de entrada canônico para agentes de IA neste repositório.
 
 - **Configurações operacionais:** `.env` e `.env.example` com prefixo obrigatório `SNH_` (`docs/engineering-settings-ssot.md`)
 - **Manifesto canônico de agentes:** [`.agents/agents.json`](.agents/agents.json)
-- **Rules canônicas:** [`.agents/rules/`](.agents/rules/) (espelhadas em [`.cursor/rules/`](.cursor/rules/))
-- **Skills canônicas:** [`.agents/skills/`](.agents/skills/) (espelhadas em [`.cursor/skills/`](.cursor/skills/))
+- **Rules canônicas:** [`.agents/rules/`](.agents/rules/)
+- **Skills canônicas:** [`.agents/skills/`](.agents/skills/)
 - **Matriz de cobertura 100%:** [`docs/agent-coverage.md`](docs/agent-coverage.md)
 - **Contrato de engenharia:** [`prompt-model.md`](prompt-model.md)
 

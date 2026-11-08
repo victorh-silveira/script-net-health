@@ -11,9 +11,6 @@ Inventário técnico e estruturação de pastas do projeto **Script Net Health**
 │   ├── skills/                   # 6 skills operacionais canônicas
 │   ├── agents.json               # Catálogo de personas e responsabilidades
 │   └── mcp.json                  # Manifesto canônico de MCP
-├── .cursor/                      # Ponte de retrocompatibilidade para o Cursor IDE
-│   ├── rules/                    # Espelho das rules canônicas
-│   └── skills/                   # Espelho das skills canônicas
 ├── .github/                      # Workflows de CI/CD e automação do GitHub Actions
 │   ├── actions/
 │   ├── templates/

@@ -2,7 +2,7 @@
 name: snh-surface-sync
 description: >-
   Finalizes changes by synchronizing docs, rules, skills, AGENTS.md, matrix,
-  mirroring to .cursor/, and validating all quality gates on WSL before commit.
+  and validating all quality gates on WSL before commit.
 ---
 
 # Sincronização de Superfícies (snh-surface-sync)
@@ -19,8 +19,8 @@ Antes de cometer alterações ou abrir Pull Request:
 2. **Sincronização de Documentação Técnica:**
    - Atualize os arquivos correspondentes em `docs/` se houver mudança em contratos, configurações ou arquitetura.
 
-3. **Paridade Canônica e Ponte (.agents/ e .cursor/):**
-   - Garanta que qualquer criação ou modificação em `.agents/rules/` e `.agents/skills/` seja espelhada para `.cursor/rules/` e `.cursor/skills/`.
+3. **Harness Canônico (.agents/):**
+   - Garanta que regras em `.agents/rules/`, skills em `.agents/skills/` e manifestos (`agents.json`, `mcp.json`) estejam consistentes e agnósticos.
 
 4. **Atualização da Matriz de Cobertura e AGENTS.md:**
    - Certifique-se de que todas as novas rules e skills estão registradas em `docs/agent-coverage.md` e na tabela de leitura de `AGENTS.md`.

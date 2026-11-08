@@ -1,4 +1,4 @@
-"""Garante que a matriz agent-coverage e estrutura .agents/ e ponte .cursor/ existem."""
+"""Garante que a matriz agent-coverage e estrutura canonica .agents/ existem."""
 
 from __future__ import annotations
 
@@ -16,10 +16,6 @@ CANONICAL_RULES_DIR = CANONICAL_AGENTS_DIR / "rules"
 CANONICAL_SKILLS_DIR = CANONICAL_AGENTS_DIR / "skills"
 CANONICAL_MCP_JSON = CANONICAL_AGENTS_DIR / "mcp.json"
 CANONICAL_AGENTS_JSON = CANONICAL_AGENTS_DIR / "agents.json"
-
-LEGACY_CURSOR_DIR = REPO_ROOT / ".cursor"
-LEGACY_RULES_DIR = LEGACY_CURSOR_DIR / "rules"
-LEGACY_SKILLS_DIR = LEGACY_CURSOR_DIR / "skills"
 
 
 @pytest.mark.unit
@@ -68,17 +64,3 @@ def test_all_skill_directories_have_skill_md():
     assert dirs, "deve haver skills em .agents/skills"
     for path in dirs:
         assert (path / "SKILL.md").is_file(), f"faltando SKILL.md em {path.name}"
-
-
-@pytest.mark.unit
-def test_cursor_backward_compatibility_bridge():
-    assert LEGACY_RULES_DIR.is_dir(), ".cursor/rules deve existir para retrocompatibilidade"
-    assert LEGACY_SKILLS_DIR.is_dir(), ".cursor/skills deve existir para retrocompatibilidade"
-
-    canonical_rules = {p.name for p in CANONICAL_RULES_DIR.glob("*.mdc")}
-    cursor_rules = {p.name for p in LEGACY_RULES_DIR.glob("*.mdc")}
-    assert canonical_rules == cursor_rules, "ponte .cursor/rules deve espelhar .agents/rules"
-
-    canonical_skills = {p.name for p in CANONICAL_SKILLS_DIR.iterdir() if p.is_dir()}
-    cursor_skills = {p.name for p in LEGACY_SKILLS_DIR.iterdir() if p.is_dir()}
-    assert canonical_skills == cursor_skills, "ponte .cursor/skills deve espelhar .agents/skills"

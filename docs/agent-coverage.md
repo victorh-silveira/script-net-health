@@ -1,6 +1,6 @@
 # Matriz de Cobertura de Agentes (100%)
 
-Cada superfície arquitetural e operacional do projeto possui documentação correspondente, regra canônica em [`.agents/rules/`](../.agents/rules/) e skill operacional em [`.agents/skills/`](../.agents/skills/), com espelho de retrocompatibilidade em [`.cursor/`](../.cursor/). Ponto de entrada canônico: [`AGENTS.md`](../AGENTS.md).
+Cada superfície arquitetural e operacional do projeto possui documentação correspondente, regra canônica em [`.agents/rules/`](../.agents/rules/) e skill operacional em [`.agents/skills/`](../.agents/skills/). Ponto de entrada canônico: [`AGENTS.md`](../AGENTS.md).
 
 ## Matriz de Rastreabilidade
 
@@ -38,4 +38,4 @@ Cada superfície arquitetural e operacional do projeto possui documentação cor
 
 ## Invariante alwaysApply
 
-Todas as regras em `.agents/rules/*.mdc` e seu espelho `.cursor/rules/*.mdc` contêm obrigatoriamente `alwaysApply: true`.
+Todas as regras em `.agents/rules/*.mdc` contêm obrigatoriamente `alwaysApply: true`.

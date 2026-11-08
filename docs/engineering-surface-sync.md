@@ -16,9 +16,8 @@ Sempre que uma alteração envolver contratos arquiteturais, configurações ope
 3. **Ponto de Entrada Canônico:**
    - Atualizar `AGENTS.md` se houver mudanças em personas, escopos de commit ou roteamento de tarefas.
 
-4. **Sincronização de Rules e Skills (.agents/ e .cursor/):**
-   - Regras criadas ou editadas em `.agents/rules/` devem ser refletidas em `.cursor/rules/`.
-   - Skills criadas ou editadas em `.agents/skills/` devem ser refletidas em `.cursor/skills/`.
+4. **Harness Canônico (.agents/):**
+   - Assegurar que regras em `.agents/rules/`, skills em `.agents/skills/` e manifestos (`agents.json`, `mcp.json`) estejam íntegros e genéricos para qualquer IA.
 
 5. **Execução de Quality Gates:**
    - Executar no WSL Linux: `make app-lint` e `make app-test`.

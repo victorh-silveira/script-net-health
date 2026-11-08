@@ -18,9 +18,10 @@ venv/
 .hypothesis/
 .ipynb_checkpoints/
 
-# ---- IA E FERRAMENTAS DE AGENTES (CANONICAL .agents/ E RETROCOMPATIBILIDADE) ----
+# ---- IA E FERRAMENTAS DE AGENTES (PADRAO CANONICO .agents/) ----
 .agent/
 .antigravity/
+.cursor/
 .gemini/
 .agents/*
 !.agents/rules/
@@ -29,11 +30,6 @@ venv/
 !.agents/skills/**
 !.agents/mcp.json
 !.agents/agents.json
-.cursor/*
-!.cursor/rules/
-!.cursor/rules/**
-!.cursor/skills/
-!.cursor/skills/**
 
 # ---- IDEs E SISTEMA OPERACIONAL ----
 *.swp
